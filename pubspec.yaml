@@ -26,6 +26,7 @@ dependencies:
   provider: ^4.3.2+2
   just_audio: ^0.5.6
   audio_service: ^0.15.3
+  audio_session: ^0.0.9
   flutter_tts: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
