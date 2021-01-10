@@ -7,38 +7,83 @@ import 'package:provider/provider.dart';
 class ControlButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: Icon(Icons.volume_up),
-          onPressed: () {
-            _showSliderDialogVolume(
-              context: context,
-              title: "Adjust volume",
-              divisions: 10,
-              min: 0.0,
-              max: 1.0,
-              onChanged: setVolume,
-            );
-          },
-        ),
-        PlaybackButton(),
-        IconButton(
-          icon: Text("${AudioPlayerTask.player.speed?.toStringAsFixed(1)}x",
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () {
-            _showSliderDialogSpeed(
-              context: context,
-              title: "Adjust speed",
-              divisions: 10,
-              min: 0.5,
-              max: 1.5,
-              onChanged: setSpeed,
-            );
-          },
-        )
-      ],
+    return Consumer<QueueState>(
+      builder: (context, queueState, widget) {
+        final queue = queueState?.queue;
+        final mediaItem = queueState?.mediaItem;
+        return Column(
+          children: [
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: mediaItem != null
+                    ? Center(
+                        child: ColorFiltered(
+                          child: Image.network(mediaItem.artUri),
+                          colorFilter:
+                              ColorFilter.mode(Colors.red, BlendMode.modulate),
+                        ),
+                      )
+                    : Container(),
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.volume_up),
+                  onPressed: () {
+                    _showSliderDialogVolume(
+                      context: context,
+                      title: "Adjust volume",
+                      divisions: 10,
+                      min: 0.0,
+                      max: 1.0,
+                      onChanged: setVolume,
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.skip_previous),
+                  iconSize: 64.0,
+                  onPressed:
+                      (queue?.isEmpty ?? true) || mediaItem == queue?.first
+                          ? null
+                          : AudioService.skipToPrevious,
+                ),
+                PlaybackButton(),
+                IconButton(
+                  icon: Icon(Icons.skip_next),
+                  iconSize: 64.0,
+                  onPressed:
+                      (queue?.isEmpty ?? true) || mediaItem == queue?.last
+                          ? null
+                          : AudioService.skipToNext,
+                ),
+                IconButton(
+                  icon: Consumer<SpeedState>(
+                    builder: (context, model, widget) => Container(
+                      height: 100.0,
+                      child: Text("${model?.speed?.toStringAsFixed(1) ?? 1.0}x",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  onPressed: () {
+                    _showSliderDialogSpeed(
+                      context: context,
+                      title: "Adjust speed",
+                      divisions: 10,
+                      min: 0.5,
+                      max: 1.5,
+                      onChanged: setSpeed,
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

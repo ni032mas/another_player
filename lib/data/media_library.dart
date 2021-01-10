@@ -3,22 +3,12 @@ import 'package:audio_service/audio_service.dart';
 class MediaLibrary {
   final _items = <MediaItem>[
     MediaItem(
-      id: "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
-      album: "Science Friday",
-      title: "A Salute To Head-Scratching Science",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 5739820),
+      id: "http://s24.myradiostream.com:14810/listen.mp3",
+      album: "Radio NA",
+      title: "Radio NA",
+      artist: "Radio NA",
       artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-    ),
-    MediaItem(
-      id: "https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3",
-      album: "Science Friday",
-      title: "From Cat Rheology To Operatic Incompetence",
-      artist: "Science Friday and WNYC Studios",
-      duration: Duration(milliseconds: 2856950),
-      artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+          "https://static.tildacdn.com/tild6634-6133-4437-b738-323539393935/Radio_NA_logo-new-ye.png",
     ),
   ];
 

@@ -1,6 +1,5 @@
 import 'package:another_player/tasks/audio_task.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
 Stream<MediaState> get mediaStateStream => Rx.combineLatest2<MediaItem, Duration, MediaState>(
@@ -38,8 +37,6 @@ play() {
     AudioService.start(
       backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
       androidNotificationChannelName: 'Audio Service Demo',
-      // Enable this if you want the Android service to exit the foreground state on pause.
-      //androidStopForegroundOnPause: true,
       androidNotificationColor: 0xFF2196f3,
       androidNotificationIcon: 'mipmap/ic_launcher',
       androidEnableQueue: true,

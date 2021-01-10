@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:another_player/tasks/audio_task.dart';
 import 'package:another_player/widgets/control_button.dart';
@@ -47,47 +46,21 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Another player'),
+        title: Consumer<QueueState>(
+          builder: (context, queueState, widget) {
+            final mediaItem = queueState?.mediaItem;
+            return mediaItem == null
+                ? Text('Another player')
+                : Text('${mediaItem.title}');
+          },
+        ),
       ),
       body: Center(
         child: Consumer<bool>(
           builder: (context, model, widget) {
-            final running = model ?? false;
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Consumer<QueueState>(
-                  builder: (context, queueState, widget) {
-                    final queue = queueState?.queue ?? [];
-                    final mediaItem = queueState?.mediaItem;
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (queue != null && queue.isNotEmpty)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.skip_previous),
-                                iconSize: 64.0,
-                                onPressed: mediaItem == queue.first
-                                    ? null
-                                    : AudioService.skipToPrevious,
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.skip_next),
-                                iconSize: 64.0,
-                                onPressed: mediaItem == queue.last
-                                    ? null
-                                    : AudioService.skipToNext,
-                              ),
-                            ],
-                          ),
-                        if (mediaItem?.title != null) Text(mediaItem.title),
-                      ],
-                    );
-                  },
-                ),
                 ControlButtons(),
                 Consumer<MediaState>(
                   builder: (context, mediaState, widget) {
@@ -101,29 +74,35 @@ class MainScreen extends StatelessWidget {
                     );
                   },
                 ),
-                StreamBuilder<AudioProcessingState>(
-                  stream: audioProcessingStateStream,
-                  builder: (context, snapshot) {
-                    final processingState =
-                        snapshot.data ?? AudioProcessingState.none;
-                    return Text(
-                        "Processing state: ${describeEnum(processingState)}");
-                  },
-                ),
-                StreamBuilder(
-                  stream: AudioService.customEventStream,
-                  builder: (context, snapshot) {
-                    return Text("custom event: ${snapshot.data}");
-                  },
-                ),
-                StreamBuilder<bool>(
-                  stream: AudioService.notificationClickEventStream,
-                  builder: (context, snapshot) {
-                    return Text(
-                      'Notification Click Status: ${snapshot.data}',
-                    );
-                  },
-                ),
+                kDebugMode
+                    ? StreamBuilder<AudioProcessingState>(
+                        stream: audioProcessingStateStream,
+                        builder: (context, snapshot) {
+                          final processingState =
+                              snapshot.data ?? AudioProcessingState.none;
+                          return Text(
+                              "Processing state: ${describeEnum(processingState)}");
+                        },
+                      )
+                    : Container(),
+                kDebugMode
+                    ? StreamBuilder(
+                        stream: AudioService.customEventStream,
+                        builder: (context, snapshot) {
+                          return Text("custom event: ${snapshot.data}");
+                        },
+                      )
+                    : Container(),
+                kDebugMode
+                    ? StreamBuilder<bool>(
+                        stream: AudioService.notificationClickEventStream,
+                        builder: (context, snapshot) {
+                          return Text(
+                            'Notification Click Status: ${snapshot.data}',
+                          );
+                        },
+                      )
+                    : Container(),
               ],
             );
           },
